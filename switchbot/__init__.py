@@ -4,7 +4,7 @@ from pycognito import Cognito
 from requests import Session
 from requests.auth import AuthBase
 
-from .utils import url_for
+from .utils import sanitize_id, url_for
 
 
 SwitchBotCognito = partial(
@@ -33,7 +33,7 @@ class SwitchBotAuth(AuthBase):
 class Device:
     def __init__(self, session, id):
         self.session = session
-        self.id = id
+        self.id = sanitize_id(id)
         self._refresh()
 
     def _refresh(self):
