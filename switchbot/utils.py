@@ -1,7 +1,9 @@
+"""Utility functions."""
 import re
 
 
 def url_for(key):
+    """Return URL for request type."""
     return {
         "query_user": "https://l9ren7efdj.execute-api.us-east-1.amazonaws.com/developStage/user/v1",
         "refresh_device": "https://l9ren7efdj.execute-api.us-east-1.amazonaws.com/developStage/devicestatus/v1/getstatus",
@@ -10,6 +12,7 @@ def url_for(key):
 
 
 def sanitize_id(dirty_id):
+    """Convert ID to sanitised version."""
     clean_id = dirty_id.upper()
     clean_id = re.sub(r"[^A-F0-9]", "", clean_id)
     return clean_id

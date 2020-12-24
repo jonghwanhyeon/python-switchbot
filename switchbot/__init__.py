@@ -1,3 +1,4 @@
+"""Main classes."""
 from functools import cached_property, partial
 
 from pycognito import Cognito
@@ -13,10 +14,14 @@ SwitchBotCognito = partial(
 
 
 class SwitchBotAuth(AuthBase):
+    """Class to handle Cognito authentication."""
+
     def __init__(self, switchbot):
+        """Create authentication object."""
         self.switchbot = switchbot
 
     def __call__(self, request):
+        """Add authenticalion header."""
         if "l9ren7efdj" in request.url:
             expired = self.switchbot.cognito.check_token()
             token = self.switchbot.cognito.access_token
@@ -26,19 +31,25 @@ class SwitchBotAuth(AuthBase):
             raise ValueError(f"Invalid url: {request.url}")
 
         request.headers["Authorization"] = token
+
         return request
 
 
 class Device:
+    """Eevice class."""
+
     def __init__(self, session, id):
+        """Create device object."""
         self.session = session
         self.id = sanitize_id(id)
+
         self._refresh()
 
     def _refresh(self):
         response = self.session.post(
             url_for("refresh_device"), json={"items": [self.id]}
         )
+
         self._type = response.data["deviceType"]
         self._state = response.data["status"]["power"]
 
@@ -52,14 +63,17 @@ class Device:
     @property
     @_up_to_date
     def state(self):
+        """Current state."""
         return self._state
 
     @property
     @_up_to_date
     def type(self):
+        """Device type."""
         return self._type
 
     def turn(self, state):
+        """Set device state."""
         assert state.lower() in ("off", "on")
         self.session.post(
             url_for("turn_device"),
@@ -79,11 +93,15 @@ class Device:
         )
 
     def toggle(self):
+        """Toggle device state."""
         self.turn("on" if self.state == "off" else "off")
 
 
 class SwitchBot:
+    """Main SwitchBot class."""
+
     def __init__(self, email_or_tokens=None, **kwargs):
+        """Create SwitchBot object."""
         email, tokens = kwargs.get("email"), kwargs.get("tokens")
         if isinstance(email_or_tokens, str):
             email = email_or_tokens
@@ -104,22 +122,28 @@ class SwitchBot:
         self.session = self._prepare_session()
 
     def authenticate(self, password):
+        """Authenticate with SwitchBot."""
         self.cognito.authenticate(password)
 
     def device(self, id):
+        """Return individual device by ID."""
         return Device(self.session, id)
 
     @cached_property
     def user_token(self):
+        """Return user token."""
         response = self.session.get(url_for("query_user"))
+
         return response.data["openApiToken"]["token"]
 
     @property
     def authenticated(self):
+        """Currently authenticated."""
         return bool(self.cognito.access_token)
 
     @property
     def cognito_tokens(self):
+        """Return Cognito tokens."""
         return {
             "id_token": self.cognito.id_token,
             "refresh_token": self.cognito.refresh_token,
@@ -129,13 +153,16 @@ class SwitchBot:
     def _prepare_session(self):
         def handle_response(response, *args, **kwargs):
             data = {key.lower(): value for key, value in response.json().items()}
+
             assert data["statuscode"] == 100
 
             data = data["body"]
             data = data["items"] if "items" in data else data
+
             response.data = (
                 data[0] if isinstance(data, list) and (len(data) == 1) else data
             )
+
             return response
 
         session = Session()

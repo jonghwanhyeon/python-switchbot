@@ -1,3 +1,4 @@
+"""Example showing how authentication works."""
 import atexit
 import json
 import os
@@ -6,6 +7,7 @@ from switchbot import SwitchBot
 
 
 def prepare_switchbot(email, password, credential_filename):
+    """Read and store credentials from file."""
     if not os.path.exists(credential_filename):
         switchbot = SwitchBot(email)
         switchbot.authenticate(password)
