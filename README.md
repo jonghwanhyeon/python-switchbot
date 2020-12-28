@@ -31,3 +31,6 @@ device.turn('on') # -> device.state == 'on'
 device.toggle()
 ```
 
+## Contributors
+Thanks to all contributors!
+- [Stuart Clark](https://github.com/stuart-c)

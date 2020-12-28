@@ -7,7 +7,7 @@ with open("README.md", "r") as input_file:
 
 setup(
     name="python-switchbot",
-    version="1.0.0",
+    version="1.0.1",
     description="A Python library to control SwitchBot devices connected to SwitchBot Hub",
     long_description=long_description,
     long_description_content_type="text/markdown",
