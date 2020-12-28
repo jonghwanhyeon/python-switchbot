@@ -1,9 +1,12 @@
 """Main classes."""
+from cachetools import TTLCache
+from cachetools.keys import hashkey
 from functools import cached_property, partial
-
+from json import dumps
 from pycognito import Cognito
 from requests import Session
 from requests.auth import AuthBase
+from threading import Lock
 
 from .utils import sanitize_id, url_for
 
@@ -38,9 +41,9 @@ class SwitchBotAuth(AuthBase):
 class Device:
     """Generic device base class."""
 
-    def __init__(self, session, id):
+    def __init__(self, switchbot, id):
         """Create device object."""
-        self.session = session
+        self.switchbot = switchbot
         self.id = sanitize_id(id)
         self.type = None
         self.children = []
@@ -52,33 +55,33 @@ class Device:
 
     def update(self):
         """Update object state."""
-        self._refresh()
+        self._refresh(True)
 
         self.name = self._device["device_name"]
 
-    def _refresh(self):
-        self._device = self._query_device(self.session, self.id)
+    def _refresh(self, force=False):
+        self._device, device_updated = self._query_device(self.switchbot, self.id)
 
-        response = self.session.post(
-            url_for("refresh_device"), json={"items": [self.id]}
+        self._status, status_updated = self.switchbot._api(
+            "post", "refresh_device", {"items": [self.id]}
         )
 
-        self._status = response.data
+        return device_updated or status_updated or force
 
     @classmethod
-    def _query_device(cls, session, id):
-        response = session.get(url_for("get_devices"))
+    def _query_device(cls, switchbot, id):
+        data, updated = switchbot._api("get", "get_devices")
 
-        for device in response.data["deviceList"]:
+        for device in data["deviceList"]:
             if device["device_mac"] == id:
-                return device
+                return device, updated
 
         raise KeyError
 
     @staticmethod
-    def factory(session, id, group=True):
+    def factory(switchbot, id, group=True):
         """Return device object of correct type."""
-        device = Device._query_device(session, sanitize_id(id))
+        device, _ = Device._query_device(switchbot, sanitize_id(id))
 
         type = device["device_detail"]["device_type"]
         links = []
@@ -89,16 +92,16 @@ class Device:
         assert type is not None
 
         if type == "WoLinkMini":
-            return MiniHub(session, id)
+            return MiniHub(switchbot, id)
         elif type == "WoHand":
-            return Bot(session, id)
+            return Bot(switchbot, id)
         elif type == "WoCurtain":
             if links and group:
-                return CurtainGroup(session, links[0])
+                return CurtainGroup(switchbot, links[0])
             else:
-                return Curtain(session, id)
+                return Curtain(switchbot, id)
         else:
-            return Device(session, id)
+            return Device(switchbot, id)
 
     def debug(self):
         """Return debug data."""
@@ -165,9 +168,10 @@ class Device:
     def _update_state(self, command, parameter="default"):
         assert self._type
 
-        self.session.post(
-            url_for("turn_device"),
-            json={
+        self.switchbot._api(
+            "post",
+            "turn_device",
+            {
                 "items": [
                     {
                         "deviceID": self.id,
@@ -178,7 +182,10 @@ class Device:
                     }
                 ]
             },
+            force=True,
         )
+
+        self.update()
 
 
 class Bot(Device):
@@ -198,8 +205,9 @@ class Bot(Device):
         else:
             raise NotImplementedError
 
-    def _refresh(self):
-        super()._refresh()
+    def _refresh(self, force=False):
+        if not super()._refresh(force):
+            return
 
         self._state = self._status["status"]["power"] == "on"
 
@@ -243,14 +251,12 @@ class CurtainGroup(Device):
         """Update object state."""
         super().update()
 
-        links = self._device["deviceLinks"]
-
         self.type = "CurtainGroup"
         self.master = True
         self.grouped = True
 
-        for child in links:
-            self.children.append(self.factory(self.session, child, False))
+        for child in self._device["deviceLinks"]:
+            self.children.append(self.factory(self.switchbot, child, False))
 
     @property
     def state(self):
@@ -345,8 +351,9 @@ class Curtain(Device):
         else:
             self.fitting = "Unknown"
 
-    def _refresh(self):
-        super()._refresh()
+    def _refresh(self, force=False):
+        if not super()._refresh(force):
+            return
 
         self._moving = self._status["status"]["isMove"]
 
@@ -435,7 +442,37 @@ class SwitchBot:
         else:
             raise ValueError("Neither email nor tokens are passed")
 
+        self._ttl = kwargs.get("ttl", 5 * 60)
+        self.cache = TTLCache(100, self._ttl)
+        self.lock = Lock()
         self.session = self._prepare_session()
+
+    def _api(self, method, type, json=None, force=False):
+        updated = False
+        data = None
+
+        key = hashkey(method, type, dumps(json))
+
+        if not force:
+            with self.lock:
+                data = self.cache.get(key)
+
+        if force or not data:
+            if method == "get":
+                response = self.session.get(url_for(type))
+            elif method == "post":
+                response = self.session.post(url_for(type), json=json)
+            else:
+                raise NotImplementedError
+
+            data = response.data
+
+            with self.lock:
+                self.cache[key] = data
+
+            updated = True
+
+        return data, updated
 
     def authenticate(self, password):
         """Authenticate with SwitchBot."""
@@ -443,7 +480,7 @@ class SwitchBot:
 
     def device(self, id):
         """Return individual device by ID."""
-        return Device.factory(self.session, id)
+        return Device.factory(self, id)
 
     @property
     def devices(self):
@@ -458,16 +495,16 @@ class SwitchBot:
     @property
     def ids(self):
         """Return all device IDs."""
-        response = self.session.get(url_for("query_user"))
+        data, _ = self._api("get", "query_user")
 
-        return response.data["sortInfo"]["array"]
+        return data["sortInfo"]["array"]
 
     @cached_property
     def user_token(self):
         """Return user token."""
-        response = self.session.get(url_for("query_user"))
+        data, _ = self._api("get", "query_user")
 
-        return response.data["openApiToken"]["token"]
+        return data["openApiToken"]["token"]
 
     @property
     def authenticated(self):
@@ -482,6 +519,17 @@ class SwitchBot:
             "refresh_token": self.cognito.refresh_token,
             "access_token": self.cognito.access_token,
         }
+
+    @property
+    def ttl(self):
+        """Return cache TTL."""
+        return self._ttl
+
+    @ttl.setter
+    def ttl(self, value):
+        """Set cache TTL."""
+        self._ttl = value
+        self.cache.ttl = value
 
     def _prepare_session(self):
         def handle_response(response, *args, **kwargs):
