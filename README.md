@@ -21,13 +21,13 @@ switchbot.authenticate('yourpassword')
 device = switchbot.device('AA:BB:CC:DD:EE:FF') # Device's BLE MAC
 print(f'Current state: {device.state}')
 
-### To turn off
+# To turn off
 device.turn('off') # -> device.state == 'off'
 
-### To turn on
+# To turn on
 device.turn('on') # -> device.state == 'on'
 
-### To toggle,
+# To toggle,
 device.toggle()
 ```
 
