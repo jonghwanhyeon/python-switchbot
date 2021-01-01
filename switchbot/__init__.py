@@ -329,6 +329,14 @@ class CurtainGroup(Device):
         """Close curtains."""
         self.children[0].close()
 
+    def move(self, value):
+        """Move curtains."""
+        self.children[0].move(value)
+
+    def toggle(self):
+        """Toggle curtains."""
+        self.children[0].toggle()
+
 
 class Curtain(Device):
     """Curtain device class."""
@@ -359,15 +367,19 @@ class Curtain(Device):
 
         if self._device["isMaster"]:
             self._position = self._status["status"]["position"]
+        else:
+            self._position = None
 
         if "battery" in self._status["status"]:
             self._battery = self._status["status"]["battery"]
+        else:
+            self._battery = None
 
     @property
     def position(self):
         """Current curtain position."""
         self._refresh()
-        return self.state
+        return self._position
 
     @position.setter
     def position(self, value):
@@ -387,9 +399,9 @@ class Curtain(Device):
         assert self.master
 
         if value:
-            self.open()
-        else:
             self.close()
+        else:
+            self.open()
 
     @property
     def moving(self):
@@ -408,6 +420,26 @@ class Curtain(Device):
         assert self.master
 
         self.move(100)
+
+    def move(self, value):
+        """Move curtain."""
+        assert self.master
+
+        if value == "open":
+            return self.open()
+        elif value == "close":
+            return self.close()
+        elif value == "closed":
+            return self.close()
+
+        assert int(value) >= 0
+        assert int(value) <= 100
+
+        self.position = int(value)
+
+    def toggle(self):
+        """Toggle curtain."""
+        self.state = not self.state
 
 
 class MiniHub(Device):
