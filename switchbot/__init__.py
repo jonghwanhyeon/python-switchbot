@@ -1,6 +1,7 @@
 """Main classes."""
 from cachetools import TTLCache
 from cachetools.keys import hashkey
+from distutils.util import strtobool
 from functools import cached_property, partial
 from json import dumps
 from pycognito import Cognito
@@ -228,10 +229,7 @@ class Bot(Device):
 
     def turn(self, value):
         """Set bot state."""
-        assert value.lower() in ("off", "on")
-        assert self.mode == "toggle"
-
-        self.state = True if value.lower() == "on" else False
+        self.state = strtobool(value)
 
     def press(self):
         """Press bot button."""
@@ -241,7 +239,7 @@ class Bot(Device):
 
     def toggle(self):
         """Toggle bot state."""
-        self.turn("off" if self.state else "on")
+        self.state = not self.state
 
 
 class CurtainGroup(Device):
