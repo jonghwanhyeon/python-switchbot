@@ -361,7 +361,10 @@ class Curtain(Device):
         if not super()._refresh(force):
             return
 
-        self._moving = self._status["status"]["isMove"]
+        if "isMove" in self._status["status"]:
+            self._moving = self._status["status"]["isMove"]
+        else:
+            self._moving = None
 
         if self._device["isMaster"]:
             self._position = self._status["status"]["position"]
