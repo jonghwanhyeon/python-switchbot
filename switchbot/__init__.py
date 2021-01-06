@@ -472,6 +472,7 @@ class SwitchBot:
         else:
             raise ValueError("Neither email nor tokens are passed")
 
+        self._devices = {}
         self._ttl = kwargs.get("ttl", 5 * 60)
         self.cache = TTLCache(100, self._ttl)
         self.lock = Lock()
@@ -510,7 +511,10 @@ class SwitchBot:
 
     def device(self, id):
         """Return individual device by ID."""
-        return Device.factory(self, id)
+        if id not in self._devices:
+            self._devices[id] = Device.factory(self, id)
+
+        return self._devices[id]
 
     @property
     def devices(self):
