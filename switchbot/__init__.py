@@ -278,7 +278,7 @@ class CurtainGroup(Device):
 
     @property
     def moving(self):
-        """ A curtain is currently moving."""
+        """A curtain is currently moving."""
         for child in self.children:
             if child.moving:
                 return True
@@ -287,6 +287,7 @@ class CurtainGroup(Device):
 
     @property
     def direction(self):
+        """Direction curtain opens."""
         direction = self.children[0].direction
 
         for child in self.children:
