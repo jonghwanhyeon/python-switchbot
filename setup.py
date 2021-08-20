@@ -24,5 +24,5 @@ setup(
     ],
     keywords="switchbot",
     packages=find_packages(),
-    install_requires=["cachetools", "pycognito", "requests"],
+    install_requires=["requests", "pyhumps"],
 )

@@ -1,3 +1,2 @@
-cachetools
-pycognito
 requests
+pyhumps
