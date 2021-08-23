@@ -38,7 +38,7 @@ print(device.status())
 device.command('turn_on')
 device.command('turn_off')
 device.command('press')
-device.command('set_position', parameter='0,ff,80)
+device.command('set_position', parameter='0,ff,80')
 ```
 
 ## Contributors
