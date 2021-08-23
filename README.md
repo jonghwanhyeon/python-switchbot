@@ -19,8 +19,8 @@ your_switch_bot_token = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 switchbot = SwitchBot(token=your_switch_bot_token)
 
 # To list all devices
-devices = switchbot.devices():
-for device in devices
+devices = switchbot.devices()
+for device in devices:
     print(device)
 # Bot(id=0A1B2C3D4E5F)
 # HubMini(id=F0A5E1B4D2C3)
