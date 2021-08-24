@@ -11,7 +11,7 @@ class Device:
 
         self.id: str = id
         self.name: str = extra.get('device_name')
-        self.type: bool = extra.get('device_type')
+        self.type: str = extra.get('device_type')
         self.cloud_enabled: bool = extra.get('enable_cloud_service')
         self.hub_id: str = extra.get('hub_device_id')
 
