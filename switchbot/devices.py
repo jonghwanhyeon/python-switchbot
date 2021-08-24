@@ -1,4 +1,6 @@
-from typing import Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import Any, ClassVar, Dict, List, Optional
 
 import humps
 
@@ -6,6 +8,9 @@ from switchbot.client import SwitchBotClient
 
 
 class Device:
+    device_type_for: ClassVar[Optional[str]] = None
+    specialized_cls: ClassVar[Dict[str, Device]] = {}
+
     def __init__(self, client: SwitchBotClient, id: str, **extra):
         self.client = client
 
@@ -20,6 +25,16 @@ class Device:
         self.grouped: bool = extra.get('group')
         self.master: bool = extra.get('master')
         self.open_direction: str = extra.get('open_direction')
+
+    def __init_subclass__(cls):
+        if cls.device_type_for is not None:
+            cls.specialized_cls[cls.device_type_for] = cls
+
+    @classmethod
+    def create(cls, client: SwitchBotClient, id: str, **extra):
+        device_type = extra.get('device_type')
+        device_cls = cls.specialized_cls.get(device_type, Device)
+        return device_cls(client, id=id, **extra)
 
     def status(self) -> Dict[str, Any]:
         mapping = {'power': 'power',

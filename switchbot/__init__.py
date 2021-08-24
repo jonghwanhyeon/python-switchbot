@@ -14,4 +14,4 @@ class SwitchBot:
                 for device in response['body']['device_list']]
 
     def device(self, id: str, **extra) -> Device:
-        return Device(client=self.client, id=id, **extra)
+        return Device.create(client=self.client, id=id, **extra)
