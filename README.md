@@ -39,6 +39,13 @@ device.command('turn_on')
 device.command('turn_off')
 device.command('press')
 device.command('set_position', parameter='0,ff,80')
+
+# For some device types like Bot:
+bot = devices[0]
+bot.turn('on')
+bot.turn('off')
+bot.toggle()
+bot.press()
 ```
 
 ## Contributors
