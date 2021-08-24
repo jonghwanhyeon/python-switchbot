@@ -20,12 +20,6 @@ class Device:
         self.cloud_enabled: bool = extra.get('enable_cloud_service')
         self.hub_id: str = extra.get('hub_device_id')
 
-        self.curtain_ids: List[str] = extra.get('curtain_devices_ids')
-        self.calibrated: bool = extra.get('calibrate')
-        self.grouped: bool = extra.get('group')
-        self.master: bool = extra.get('master')
-        self.open_direction: str = extra.get('open_direction')
-
     def __init_subclass__(cls):
         if cls.device_type_for is not None:
             cls.specialized_cls[cls.device_type_for] = cls
@@ -89,3 +83,16 @@ class Bot(Device):
     def toggle(self):
         state = self.status()['power']
         self.turn('on' if state == 'off' else 'off')
+
+
+class Curtain(Device):
+    device_type_for = 'Curtain'
+
+    def __init__(self, client: SwitchBotClient, id: str, **extra):
+        super().__init__(self, id, **extra)
+
+        self.curtain_ids: List[str] = extra.get('curtain_devices_ids')
+        self.calibrated: bool = extra.get('calibrate')
+        self.grouped: bool = extra.get('group')
+        self.master: bool = extra.get('master')
+        self.open_direction: str = extra.get('open_direction')
