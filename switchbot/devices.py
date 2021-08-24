@@ -54,7 +54,6 @@ class Device:
 
         self.client.post(f'devices/{self.id}/commands', json=payload)
 
-
     def __repr__(self):
         name = 'Device' if self.type is None else self.type
         name = name.replace(' ', '')
