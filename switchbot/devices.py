@@ -73,3 +73,19 @@ class Device:
         name = 'Device' if self.type is None else self.type
         name = name.replace(' ', '')
         return f'{name}(id={self.id})'
+
+
+class Bot(Device):
+    device_type_for = 'Bot'
+
+    def turn(self, state: str):
+        state = state.lower()
+        assert state in ('on', 'off')
+        self.command(f'turn_{state}')
+
+    def press(self):
+        self.command('press')
+
+    def toggle(self):
+        state = self.status()['power']
+        self.turn('on' if state == 'off' else 'off')
