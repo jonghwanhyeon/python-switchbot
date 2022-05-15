@@ -64,7 +64,7 @@ remote = switchbot.remote(id='')
 remote.turn('on')
 remote.turn('off')
 
-# To send supported commands like
+# To send supported commands,
 remote.command('swing')
 remote.command('low_speed')
 
