@@ -11,6 +11,8 @@ pip install python-switchbot
 ```
 
 ## Usage
+
+### Devices
 ```python
 from switchbot import SwitchBot
 
@@ -46,6 +48,28 @@ bot.turn('on')
 bot.turn('off')
 bot.toggle()
 bot.press()
+```
+
+### Remotes
+```python
+# To list all infra red remotes
+remotes = switchbot.remotes()
+for remote in remotes:
+    print(remote)
+
+# If you already know a remote id:
+remote = switchbot.remote(id='')
+
+# Supported devices such as fans, air purifiers:
+remote.turn('on')
+remote.turn('off')
+
+# To send supported commands like
+remote.command('swing')
+remote.command('low_speed')
+
+# To send custom commands,
+remote.command('MyCustomCommand', customize=True)
 ```
 
 ## Contributors
