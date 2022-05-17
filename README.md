@@ -75,3 +75,5 @@ remote.command('MyCustomCommand', customize=True)
 ## Contributors
 Thanks to all contributors!
 - [Stuart Clark](https://github.com/stuart-c)
+- [Eric Abruzzese](https://github.com/eabruzzese)
+- [ekawatani](https://github.com/ekawatani)
