@@ -13,7 +13,7 @@ pip install python-switchbot
 ## Usage
 
 
-### API V1.1
+### API V1.1 Init
 ```python
 from switchbot import SwitchBot
 
@@ -25,7 +25,7 @@ some_random_chars = ''.join(random.choice(string.ascii_lowercase) for i in range
 switchbot = SwitchBot(token=your_switch_bot_token, secret=your_switch_bot_secret, nonce=some_random_chars, ver="1.1")
 ```
 
-### API V1.0
+### API V1.0 Init
 
 ```python
 from switchbot import SwitchBot
