@@ -75,7 +75,7 @@ bot.press()
 lock = devices[1]
 lock.lock()
 lock.unlock()
-bot.toggle()
+lock.toggle()
 ```
 
 ### Remotes
