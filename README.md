@@ -17,6 +17,9 @@ pip install python-switchbot
 ```python
 from switchbot import SwitchBot
 
+import string
+import random
+
 # To get the token and secret, please refer to https://github.com/OpenWonderLabs/SwitchBotAPI#getting-started
 your_switch_bot_token = '98a6732b2ac256d40ffab7db31a82f518969f4d1a64eadff581d45e902327b7c577aa6ead517bda589c19b4ca0b2599b'
 your_switch_bot_secret = '222cdc22f049d111c5d0071c131b8b77'
