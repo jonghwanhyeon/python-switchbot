@@ -6,8 +6,8 @@ from switchbot.client import SwitchBotClient
 
 
 class SwitchBot:
-    def __init__(self, token: str):
-        self.client = SwitchBotClient(token)
+    def __init__(self, token: str, secret: str, nonce: str = ''):
+        self.client = SwitchBotClient(token, secret, nonce)        
 
     def devices(self) -> List[Device]:
         response = self.client.get('devices')

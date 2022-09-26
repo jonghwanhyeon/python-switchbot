@@ -23,7 +23,9 @@ status_key_mapping = {
     'speed': 'speed',
     'shaking': 'oscillating',
     'shake_center': 'oscillating_center',
-    'shake_range': 'oscillating_range'
+    'shake_range': 'oscillating_range',
+    'lock_state': 'lock_state',
+    'door_state': 'door_state'
 }
 
 
@@ -98,3 +100,21 @@ class Curtain(Device):
         self.grouped: bool = extra.get('group')
         self.master: bool = extra.get('master')
         self.open_direction: str = extra.get('open_direction')
+
+class Lock(Device):
+    device_type_for = 'Lock'
+
+    def lock(self):
+        self.command('lock')
+
+    def unlock(self):
+        self.command('unlock')
+
+    def toggle(self):
+        state = self.status()['lock_state']
+        assert state in ('unlocked', 'locked')
+
+        if state == 'unlocked': 
+            self.lock()
+        else:
+            self.unlock()
