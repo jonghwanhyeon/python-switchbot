@@ -87,3 +87,5 @@ Thanks to all contributors!
 - [Stuart Clark](https://github.com/stuart-c)
 - [Eric Abruzzese](https://github.com/eabruzzese)
 - [ekawatani](https://github.com/ekawatani)
+- [edsaavedra84](https://github.com/edsaavedra84)
+- [fldc](https://github.com/fldc)
