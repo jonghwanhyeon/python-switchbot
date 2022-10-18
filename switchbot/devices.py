@@ -102,7 +102,7 @@ class Curtain(Device):
         self.open_direction: str = extra.get('open_direction')
 
 class Lock(Device):
-    device_type_for = 'Lock'
+    device_type_for = 'Smart Lock'
 
     def lock(self):
         self.command('lock')
@@ -114,7 +114,7 @@ class Lock(Device):
         state = self.status()['lock_state']
         assert state in ('unlocked', 'locked')
 
-        if state == 'unlocked': 
+        if state == 'unlocked':
             self.lock()
         else:
             self.unlock()
