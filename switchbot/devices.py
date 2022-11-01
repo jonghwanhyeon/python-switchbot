@@ -98,7 +98,7 @@ class Curtain(Device):
     device_type_for = "Curtain"
 
     def __init__(self, client: SwitchBotClient, id: str, **extra):
-        super().__init__(self, client, id, **extra)
+        super().__init__(client, id, **extra)
 
         self.curtain_ids: List[str] = extra.get("curtain_devices_ids")
         self.calibrated: bool = extra.get("calibrate")
