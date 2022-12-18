@@ -1,9 +1,8 @@
-from typing import Any
-
 import base64
 import hashlib
 import hmac
 import time
+from typing import Any
 
 import humps
 import requests
@@ -20,9 +19,7 @@ class SwitchBotClient:
 
         string_to_sign = bytes(string_to_sign, "utf-8")
         secret = bytes(secret, "utf-8")
-        sign = base64.b64encode(
-            hmac.new(secret, msg=string_to_sign, digestmod=hashlib.sha256).digest()
-        )
+        sign = base64.b64encode(hmac.new(secret, msg=string_to_sign, digestmod=hashlib.sha256).digest())
 
         self.session.headers["Authorization"] = token
         self.session.headers["t"] = str(timestamp)
@@ -34,9 +31,7 @@ class SwitchBotClient:
         response = self.session.request(method, url, **kwargs)
 
         if response.status_code != 200:
-            raise RuntimeError(
-                f"SwitchBot API server returns status {response.status_code}"
-            )
+            raise RuntimeError(f"SwitchBot API server returns status {response.status_code}")
 
         response_in_json = humps.decamelize(response.json())
         if response_in_json["status_code"] != 100:

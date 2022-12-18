@@ -1,8 +1,8 @@
 from typing import List
-from switchbot.devices import Device
-from switchbot.remotes import Remote
 
 from switchbot.client import SwitchBotClient
+from switchbot.devices import Device
+from switchbot.remotes import Remote
 
 
 class SwitchBot:
