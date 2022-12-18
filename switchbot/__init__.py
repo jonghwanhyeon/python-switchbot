@@ -4,6 +4,8 @@ from switchbot.client import SwitchBotClient
 from switchbot.devices import Device
 from switchbot.remotes import Remote
 
+__version__ = "2.2.3"
+
 
 class SwitchBot:
     def __init__(self, token: str, secret: str, nonce: str = ""):
