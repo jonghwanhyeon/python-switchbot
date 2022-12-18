@@ -54,11 +54,7 @@ class Device:
 
     def status(self) -> Dict[str, Any]:
         response = self.client.get(f"devices/{self.id}/status")
-        return {
-            status_key_mapping[key]: value
-            for key, value in response["body"].items()
-            if key in status_key_mapping
-        }
+        return {status_key_mapping[key]: value for key, value in response["body"].items() if key in status_key_mapping}
 
     def command(self, action: str, parameter: Optional[str] = None):
         parameter = "default" if parameter is None else parameter
