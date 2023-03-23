@@ -8,6 +8,8 @@ from switchbot.client import SwitchBotClient
 
 status_key_mapping = {
     "power": "power",
+    "battery": "battery",
+    "version": "version",
     "humidity": "humidity",
     "temperature": "temperature",
     "nebulization_efficiency": "nebulization_efficiency",
