@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List, Optional, Type
 
 import humps
 
@@ -9,7 +9,7 @@ from switchbot.client import SwitchBotClient
 
 class Device:
     device_type_for: ClassVar[Optional[str]] = None
-    specialized_cls: ClassVar[Dict[str, Device]] = {}
+    specialized_cls: ClassVar[Dict[str, Type[Device]]] = {}
 
     def __init__(self, client: SwitchBotClient, id: str, **extra):
         self.client = client
