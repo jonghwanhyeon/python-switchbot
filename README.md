@@ -79,11 +79,3 @@ remote.command('low_speed')
 # To send custom commands,
 remote.command('MyCustomCommand', customize=True)
 ```
-
-## Contributors
-Thanks to all contributors!
-- [Stuart Clark](https://github.com/stuart-c)
-- [Eric Abruzzese](https://github.com/eabruzzese)
-- [ekawatani](https://github.com/ekawatani)
-- [edsaavedra84](https://github.com/edsaavedra84)
-- [fldc](https://github.com/fldc)
