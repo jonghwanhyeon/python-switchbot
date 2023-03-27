@@ -15,14 +15,12 @@ pip install python-switchbot
 
 ### Devices
 ```python
-import uuid
-
 from switchbot import SwitchBot
 
 # To get the token and secret, please refer to https://github.com/OpenWonderLabs/SwitchBotAPI#getting-started
 your_switch_bot_token = '98a6732b2ac256d40ffab7db31a82f518969f4d1a64eadff581d45e902327b7c577aa6ead517bda589c19b4ca0b2599b'
 your_switch_bot_secret = '222cdc22f049d111c5d0071c131b8b77'
-switchbot = SwitchBot(token=your_switch_bot_token, secret=your_switch_bot_secret, nonce=str(uuid.uuid4()))
+switchbot = SwitchBot(token=your_switch_bot_token, secret=your_switch_bot_secret)
 # To list all devices
 devices = switchbot.devices()
 for device in devices:

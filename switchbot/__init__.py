@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 
 from switchbot.client import SwitchBotClient
@@ -8,8 +9,8 @@ __version__ = "2.2.3"
 
 
 class SwitchBot:
-    def __init__(self, token: str, secret: str, nonce: str = ""):
-        self.client = SwitchBotClient(token, secret, nonce)
+    def __init__(self, token: str, secret: str):
+        self.client = SwitchBotClient(token, secret, nonce=str(uuid.uuid4()))
 
     def devices(self) -> List[Device]:
         response = self.client.get("devices")

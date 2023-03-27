@@ -11,19 +11,22 @@ switchbot_host = "https://api.switch-bot.com/v1.1"
 
 
 class SwitchBotClient:
-    def __init__(self, token: str, secret: str, nonce: str = ""):
+    def __init__(self, token: str, secret: str, nonce: str):
         self.session = requests.Session()
 
         timestamp = int(round(time.time() * 1000))
-        string_to_sign = f"{token}{timestamp}{nonce}"
-
-        string_to_sign = bytes(string_to_sign, "utf-8")
-        secret = bytes(secret, "utf-8")
-        sign = base64.b64encode(hmac.new(secret, msg=string_to_sign, digestmod=hashlib.sha256).digest())
+        signature = f"{token}{timestamp}{nonce}"
+        signature = base64.b64encode(
+            hmac.new(
+                secret.encode(),
+                msg=signature.encode(),
+                digestmod=hashlib.sha256,
+            ).digest()
+        )
 
         self.session.headers["Authorization"] = token
         self.session.headers["t"] = str(timestamp)
-        self.session.headers["sign"] = sign
+        self.session.headers["sign"] = signature
         self.session.headers["nonce"] = nonce
 
     def request(self, method: str, path: str, **kwargs) -> Any:
