@@ -6,28 +6,6 @@ import humps
 
 from switchbot.client import SwitchBotClient
 
-status_key_mapping = {
-    "power": "power",
-    "humidity": "humidity",
-    "temperature": "temperature",
-    "nebulization_efficiency": "nebulization_efficiency",
-    "auto": "auto",
-    "child_lock": "safety_lock",
-    "sound": "sound",
-    "calibrate": "calibrate",
-    "group": "grouped",
-    "moving": "moving",
-    "slide_position": "slide_position",
-    "mode": "mode",
-    "speed": "speed",
-    "speed": "speed",
-    "shaking": "oscillating",
-    "shake_center": "oscillating_center",
-    "shake_range": "oscillating_range",
-    "lock_state": "lock_state",
-    "door_state": "door_state",
-}
-
 
 class Device:
     device_type_for: ClassVar[Optional[str]] = None
@@ -54,7 +32,7 @@ class Device:
 
     def status(self) -> Dict[str, Any]:
         response = self.client.get(f"devices/{self.id}/status")
-        return {status_key_mapping[key]: value for key, value in response["body"].items() if key in status_key_mapping}
+        return {key: humps.decamelize(value) for key, value in response["body"].items()}
 
     def command(self, action: str, parameter: Optional[str] = None):
         parameter = "default" if parameter is None else parameter
