@@ -2,7 +2,7 @@
 A Python library to control SwitchBot devices connected to SwitchBot Hub
 
 ## Requirements
-- Python 3.8+
+- Python 3.7+
 - [A SwitchBot Token](https://github.com/OpenWonderLabs/SwitchBotAPI#getting-started)
 
 ## Installation
