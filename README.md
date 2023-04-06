@@ -79,3 +79,17 @@ remote.command('low_speed')
 # To send custom commands,
 remote.command('MyCustomCommand', customize=True)
 ```
+
+### Scenes
+```python
+# To list all infra red remotes
+scenes = switchbot.scenes()
+for scene in scenes:
+    print(scene)
+
+# If you already know a remote id:
+scene = switchbot.scene(id='')
+
+# To execute scene
+scene.execute()
+```
