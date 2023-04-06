@@ -4,6 +4,7 @@ from typing import List
 from switchbot.client import SwitchBotClient
 from switchbot.devices import Device
 from switchbot.remotes import Remote
+from switchbot.scene import Scene
 
 __version__ = "2.3.0"
 
@@ -41,3 +42,13 @@ class SwitchBot:
             if remote.id == id:
                 return remote
         raise ValueError(f"Unknown remote {id}")
+
+    def scenes(self) -> List[Scene]:
+        response = self.client.get("scenes")
+        return [Scene(client=self.client, id=scene["scene_id"], **scene) for scene in response["body"]]
+
+    def scene(self, id: str) -> Scene:
+        for scene in self.scenes():
+            if scene.id == id:
+                return scene
+        raise ValueError(f"Unknown scene {id}")
