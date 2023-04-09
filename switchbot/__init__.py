@@ -6,7 +6,7 @@ from switchbot.devices import Device
 from switchbot.remotes import Remote
 from switchbot.scene import Scene
 
-__version__ = "2.3.0"
+__version__ = "2.3.1"
 
 
 class SwitchBot:
