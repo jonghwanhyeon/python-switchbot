@@ -5,6 +5,7 @@ from typing import ClassVar, Dict, Optional, Type
 import humps
 
 from switchbot.client import SwitchBotClient
+from switchbot.enums import AirConditionerMode, AirConditionerFanSpeed, AirConditionerPowerState
 
 
 class Remote:
@@ -61,6 +62,12 @@ class SupportedRemote(Remote):
         state = state.lower()
         assert state in ("on", "off")
         self.command(f"turn_{state}")
+
+class AirConditioner(SupportedRemote):
+    remote_type_for = "Air Conditioner"
+    def set_all(self, temperature: int, mode: AirConditionerMode, fan_speed: AirConditionerFanSpeed, power_state: AirConditionerPowerState):
+        assert type(temperature) is int
+        self.command(f"{temperature},{mode},{fan_speed},{power_state}")
 
 
 class OtherRemote(Remote):
