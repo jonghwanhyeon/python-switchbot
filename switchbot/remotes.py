@@ -65,6 +65,7 @@ class SupportedRemote(Remote):
 
 class AirConditioner(SupportedRemote):
     remote_type_for = "Air Conditioner"
+    
     def set_all(self, temperature: int, mode: AirConditionerMode, fan_speed: AirConditionerFanSpeed, power_state: AirConditionerPowerState):
         assert type(temperature) is int
         self.command(f"{temperature},{mode},{fan_speed},{power_state}")
